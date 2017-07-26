@@ -15,7 +15,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('./public'));
 
 // manage postgres connection
-const connectionString = `postgres://postgres:${process.env.PG_PASSWORD}@localhost:5432/vetmanager`
+// for production deployments, use the connection string provided by heroku for the postgres database
+const connectionString = process.env.CONNECTION_STRING;
+
+// if no env var with a connection string, assume we're local
+if (!connectionString)
+  const connectionString = `postgres://postgres:${process.env.PG_PASSWORD}@localhost:5432/vetmanager`;
+
 const client = new pg.Client(connectionString);
 client.connect();
 client.on('error', function (err) {
